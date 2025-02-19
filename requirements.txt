@@ -1,0 +1,7 @@
+apache-airflow
+python-dotenv
+requests
+bs4
+pandas
+lxml
+psycopg2-binary
