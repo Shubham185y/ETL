@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 # API & Database details
 URL = "https://web-api.tp.entsoe.eu/api"
 
-load_dotenv("dags\.env")
+load_dotenv("dags/.env")  # Use a forward slash for cross-platform paths
 
 ENTSOE_API_KEY = os.getenv("ENTSOE_API_KEY")
 POSTGRES_CONN_ID = os.getenv("POSTGRES_CONN_ID")
@@ -46,7 +46,9 @@ def extract_data():
     """Extracts data from ENTSO-E API"""
     response = requests.get(URL, params=PARAMS)
     if response.status_code != 200:
-        raise Exception(f"API request failed! Status: {response.status_code}, Response: {response.text}")
+        raise Exception(
+            f"API request failed! Status: {response.status_code}," 
+            f"Response: {response.text}")
     return response.text
 
 
@@ -64,7 +66,10 @@ def transform_data(xml_data):
             price_tag = point.find("price.amount")
             price = float(price_tag.text) if price_tag else None
 
-            rows.append({"start_time": start_time, "end_time": end_time, "position": int(position), "price": price})
+            rows.append({"start_time": start_time, 
+                         "end_time": end_time, 
+                         "position": int(position), 
+                         "price": price})
 
     df = pd.DataFrame(rows)
     df["start_time"] = pd.to_datetime(df["start_time"])
@@ -84,7 +89,10 @@ def load_data(csv_path):
     engine = pg_hook.get_sqlalchemy_engine()
 
     df = pd.read_csv(csv_path)
-    df.to_sql("balancing_reserves", con=engine, if_exists="append", index=False)
+    df.to_sql("balancing_reserves", 
+              con=engine, 
+              if_exists="append", 
+              index=False)
 
     print("✅ Data loaded successfully!")
 
