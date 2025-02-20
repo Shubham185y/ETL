@@ -47,7 +47,7 @@ def extract_data():
     response = requests.get(URL, params=PARAMS)
     if response.status_code != 200:
         raise Exception(
-            f"API request failed! Status: {response.status_code}," 
+            f"API request failed! Status: {response.status_code},"
             f"Response: {response.text}")
     return response.text
 
@@ -66,9 +66,9 @@ def transform_data(xml_data):
             price_tag = point.find("price.amount")
             price = float(price_tag.text) if price_tag else None
 
-            rows.append({"start_time": start_time, 
-                         "end_time": end_time, 
-                         "position": int(position), 
+            rows.append({"start_time": start_time,
+                         "end_time": end_time,
+                         "position": int(position),
                          "price": price})
 
     df = pd.DataFrame(rows)
@@ -89,9 +89,9 @@ def load_data(csv_path):
     engine = pg_hook.get_sqlalchemy_engine()
 
     df = pd.read_csv(csv_path)
-    df.to_sql("balancing_reserves", 
-              con=engine, 
-              if_exists="append", 
+    df.to_sql("balancing_reserves",
+              con=engine,
+              if_exists="append",
               index=False)
 
     print("✅ Data loaded successfully!")
